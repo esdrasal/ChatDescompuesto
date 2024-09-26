@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Circular</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .chat-container {
+            width: 400px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+        #chat {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin-bottom: 5px;
+        }
+        #inputMessage {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #sendBtn, #finalizarBtn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #sendBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #finalizarBtn {
+            background-color: #FF5733;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div id="chat"></div>
+    <input type="text" id="inputMessage" placeholder="Escribe tu mensaje">
+    <button id="sendBtn">Enviar</button>
+    <button id="finalizarBtn">Finalizar</button>
+</div>
+
+<script>
+    const users = ["Usuario 1", "Usuario 2", "Usuario 3"];
+    let currentUserIndex = 0;
+    let conversation = [];
+    let visibleMessages = [[], [], []]; // Mensajes visibles por cada usuario
+
+    const chatDiv = document.getElementById("chat");
+    const inputMessage = document.getElementById("inputMessage");
+    const sendBtn = document.getElementById("sendBtn");
+    const finalizarBtn = document.getElementById("finalizarBtn");
+
+    function updateChat() {
+        chatDiv.innerHTML = "";
+        visibleMessages[currentUserIndex].forEach(msg => {
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message");
+            messageDiv.textContent = msg;
+            chatDiv.appendChild(messageDiv);
+        });
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    function sendMessage() {
+        const message = inputMessage.value.trim();
+        if (!message) return;
+        
+        const sender = users[currentUserIndex];
+        const receiverIndex = (currentUserIndex + 1) % users.length;
+        const receiver = users[receiverIndex];
+        const fullMessage = `${sender}: ${message}`;
+
+        // Agregar el mensaje a la conversación y al receptor adecuado
+        conversation.push(fullMessage);
+        visibleMessages[receiverIndex].push(fullMessage);
+
+        inputMessage.value = "";
+        currentUserIndex = receiverIndex;
+
+        updateChat();
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+
+    finalizarBtn.addEventListener("click", () => {
+        chatDiv.innerHTML = "";
+        conversation.forEach(msg => {
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message");
+            messageDiv.textContent = msg;
+            chatDiv.appendChild(messageDiv);
+        });
+    });
+
+    // Inicializar chat para el usuario 1
+    updateChat();
+</script>
+
+</body>
+</html>
